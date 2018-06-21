@@ -27,7 +27,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Activity_Bitstamp extends AppCompatActivity {
-
+////
     public GetInterface getInterface;
     public Retrofit retrofit;
     public Bitstamp data;
@@ -36,6 +36,9 @@ public class Activity_Bitstamp extends AppCompatActivity {
     Response<Bitstamp> res;
     public ArrayList<Bitstamp> bidList = new ArrayList<>();
     public BitstampAPI gow = new BitstampAPI();
+    String num1=new String();
+    String num2=new String();
+    String num3=new String();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,8 @@ public class Activity_Bitstamp extends AppCompatActivity {
         retrofit = new Retrofit.Builder().baseUrl("https://www.bitstamp.net").addConverterFactory(GsonConverterFactory.create()).build();
         getInterface = retrofit.create(GetInterface.class);
         gow.execute();
+        TextView v=findViewById(R.id.text1);
+        v.setText("Bitcoin (BTC)");
     }
 
     @Override
@@ -51,6 +56,7 @@ public class Activity_Bitstamp extends AppCompatActivity {
         super.onStart();
         if(gow==null) {
             gow.execute();
+            timeIndex = 0;
         }
     }
 
@@ -66,38 +72,38 @@ public class Activity_Bitstamp extends AppCompatActivity {
             case R.id.bchusd:
                 current_pair = "bchusd";
                 timeIndex = 0;
-                TextView v=findViewById(R.id.text);
-                v.setText("bchusd");
+                TextView v=findViewById(R.id.text1);
+                v.setText("Bitcoin Cash (BCH)");
                 bidList.clear();
                 break;
             case R.id.btcusd:
                 current_pair = "btcusd";
                 timeIndex = 0;
-                TextView v1=findViewById(R.id.text);
-                v1.setText("btcusd");
+                TextView v1=findViewById(R.id.text1);
+                v1.setText("Bitcoin (BTC)");
                 bidList.clear();
                 break;
             case R.id.ethusd:
                 current_pair = "ethusd";
                 timeIndex = 0;
-                TextView v2=findViewById(R.id.text);
-                v2.setText("ethusd");
+                TextView v2=findViewById(R.id.text1);
+                v2.setText("Ethereum (ETH)");
                 bidList.clear();
                 break;
-            case R.id.xmrusd:
+          /*  case R.id.xmrusd:
                 current_pair = "xmrusd";
                 timeIndex = 0;
-                TextView v3=findViewById(R.id.text);
-                v3.setText("xmrusd");
+                TextView v3=findViewById(R.id.text1);
+                v3.setText("Monero (XMR)");
                 bidList.clear();
                 break;
             case R.id.ltcusd:
                 current_pair = "ltcusd";
                 timeIndex = 0;
-                TextView v4=findViewById(R.id.text);
-                v4.setText("ltcusd");
+                TextView v4=findViewById(R.id.text1);
+                v4.setText("Litecoin (LTC)");
                 bidList.clear();
-                break;
+                break;*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -136,14 +142,19 @@ public class Activity_Bitstamp extends AppCompatActivity {
             List<Entry> lastEntries = new ArrayList<>();
             for (Bitstamp i : bidList) {
                 Float bid = i.getBid();
+                num1=""+bid;
                 Float ask = i.getAsk();
+                num2=""+ask;
                 Float last = i.getLast();
+                num3=""+last;
                 Float timestamp = i.getTimestamp();
 
                 lastEntries.add(new Entry(timestamp, last));
                 bidEntries.add(new Entry(timestamp, bid));
                 askEntries.add(new Entry(timestamp, ask));
             }
+            TextView v2=findViewById(R.id.text2);
+            v2.setText("Bid: "+ " "+ num1 + "\n" + "\n"+ "Ask: "+ " "+num2 + "\n" + "\n"+ "Last: "+ " " +num3);
             LineDataSet bidChart = new LineDataSet(bidEntries, "Bid");
             bidChart.setColor(Color.GREEN);
 
@@ -160,10 +171,14 @@ public class Activity_Bitstamp extends AppCompatActivity {
             chartData.addDataSet(askChart);
             chartData.addDataSet(lastChart);
             chart.setData(chartData);
+            if(timeIndex<1){
+                chart.fitScreen();
+            }
             chart.getAxisLeft().setEnabled(false);
             chart.getXAxis().setAxisMinimum(0);
-            chart.getXAxis().setAxisMaximum(8 + timeIndex);
-            chart.invalidate();
+            chart.getXAxis().setAxisMaximum(1+timeIndex);
+            chart.setVisibleXRangeMaximum (8);
+            chart.moveViewToX(timeIndex);
         }
 
         @Override
@@ -177,6 +192,7 @@ public class Activity_Bitstamp extends AppCompatActivity {
         super.onStop();
         if(gow!=null){
             gow.cancel(true);
+            timeIndex = 0;
         }
     }
 

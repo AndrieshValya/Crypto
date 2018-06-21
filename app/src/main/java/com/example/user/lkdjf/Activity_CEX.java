@@ -37,6 +37,9 @@ public class Activity_CEX extends AppCompatActivity {
     Response<CEX> res;
     public ArrayList<CEX> bidList = new ArrayList<>();
     public CEXAPI gow = new CEXAPI();
+    String num1=new String();
+    String num2=new String();
+    String num3=new String();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class Activity_CEX extends AppCompatActivity {
         retrofit = new Retrofit.Builder().baseUrl("https://cex.io").addConverterFactory(GsonConverterFactory.create()).build();
         getInterface = retrofit.create(GetInterfaceC.class);
         gow.execute();
+        TextView v=findViewById(R.id.text1);
+        v.setText("Bitcoin (BTC)");
     }
 
     @Override
@@ -52,6 +57,7 @@ public class Activity_CEX extends AppCompatActivity {
         super.onStart();
         if(gow==null) {
             gow.execute();
+            timeIndex=0;
         }
     }
 
@@ -68,42 +74,42 @@ public class Activity_CEX extends AppCompatActivity {
                 symbol1 = "BCH";
                 symbol2 = "USD";
                 timeIndex = 0;
-                TextView v=findViewById(R.id.text);
-                v.setText("bchusd");
+                TextView v=findViewById(R.id.text1);
+                v.setText("Bitcoin Cash (BCH)");
                 bidList.clear();
                 break;
             case R.id.btcusd:
                 symbol1 = "BTC";
                 symbol2 = "USD";
                 timeIndex = 0;
-                TextView v1=findViewById(R.id.text);
-                v1.setText("btcusd");
+                TextView v1=findViewById(R.id.text1);
+                v1.setText("Bitcoin (BTC)");
                 bidList.clear();
                 break;
             case R.id.ethusd:
                 symbol1 = "ETH";
                 symbol2 = "USD";
                 timeIndex = 0;
-                TextView v2=findViewById(R.id.text);
-                v2.setText("ethusd");
+                TextView v2=findViewById(R.id.text1);
+                v2.setText("Ethereum (ETH)");
                 bidList.clear();
                 break;
-            case R.id.xmrusd:
+        /*    case R.id.xmrusd:
                 symbol1 = "XMR";
                 symbol2 = "USD";
                 timeIndex = 0;
-                TextView v3=findViewById(R.id.text);
-                v3.setText("xmrusd");
+                TextView v3=findViewById(R.id.text1);
+                v3.setText("Monero (XMR)");
                 bidList.clear();
                 break;
             case R.id.ltcusd:
                 symbol1 = "LTC";
                 symbol2 = "USD";
                 timeIndex = 0;
-                TextView v4=findViewById(R.id.text);
-                v4.setText("ltcusd");
+                TextView v4=findViewById(R.id.text1);
+                v4.setText("Litecoin (LTC)");
                 bidList.clear();
-                break;
+                break;*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -142,14 +148,19 @@ public class Activity_CEX extends AppCompatActivity {
             List<Entry> lastEntries = new ArrayList<>();
             for (CEX i : bidList) {
                 Float bid = i.getBid();
+                num1=""+bid;
                 Float ask = i.getAsk();
+                num2=""+ask;
                 Float last = i.getLast();
+                num3=""+last;
                 Float timestamp = i.getTimestamp();
 
                 lastEntries.add(new Entry(timestamp, last));
                 bidEntries.add(new Entry(timestamp, bid));
                 askEntries.add(new Entry(timestamp, ask));
             }
+            TextView v2=findViewById(R.id.text2);
+            v2.setText("Bid: "+ " "+ num1 + "\n" + "\n"+ "Ask: "+ " "+num2 + "\n" + "\n"+ "Last: "+ " " +num3);
             LineDataSet bidChart = new LineDataSet(bidEntries, "Bid");
             bidChart.setColor(Color.GREEN);
 
@@ -158,18 +169,20 @@ public class Activity_CEX extends AppCompatActivity {
 
             LineDataSet lastChart = new LineDataSet(lastEntries, "Last Price");
             lastChart.setColor(Color.BLACK);
-
             LineChart chart = findViewById(R.id.lineChart);
-
             LineData chartData = new LineData();
             chartData.addDataSet(bidChart);
             chartData.addDataSet(askChart);
             chartData.addDataSet(lastChart);
             chart.setData(chartData);
+            if(timeIndex<1){
+                chart.fitScreen();
+            }
             chart.getAxisLeft().setEnabled(false);
             chart.getXAxis().setAxisMinimum(0);
-            chart.getXAxis().setAxisMaximum(8 + timeIndex);
-            chart.invalidate();
+            chart.getXAxis().setAxisMaximum(1+timeIndex);
+            chart.setVisibleXRangeMaximum (8);
+            chart.moveViewToX(timeIndex);
         }
 
         @Override
@@ -183,6 +196,7 @@ public class Activity_CEX extends AppCompatActivity {
         super.onStop();
         if(gow!=null){
             gow.cancel(true);
+            timeIndex=0;
         }
     }
 

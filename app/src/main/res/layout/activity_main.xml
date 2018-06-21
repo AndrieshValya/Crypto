@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,22 +10,47 @@
 
     <Button
         android:id="@+id/bitstamp"
-        android:layout_width="match_parent"
+        android:layout_width="282dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="150dp"
         android:onClick="onClick"
-        android:text="bitstamp" />
+        android:text="bitstamp"
+        android:elevation="10dp"
+        android:background="@android:drawable/dialog_holo_light_frame"/>
 
     <Button
         android:id="@+id/bitfinex"
-        android:layout_width="match_parent"
+        android:layout_width="282dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="225dp"
         android:onClick="onClick"
-        android:text="bitfinex" />
+        android:text="bitfinex"
+        android:elevation="10dp"
+        android:background="@android:drawable/dialog_holo_light_frame"/>
 
     <Button
         android:id="@+id/cex"
-        android:layout_width="match_parent"
+        android:layout_width="282dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="300dp"
+        android:onClick="onClick"
         android:text="CEX"
-        android:onClick="onClick"/>
-</LinearLayout>
+        android:elevation="10dp"
+        android:background="@android:drawable/dialog_holo_light_frame"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/bitstamp"
+        android:layout_marginTop="100dp"
+        android:text="Select a stock exchange"
+        android:textStyle="bold|italic"/>
+</RelativeLayout >

@@ -36,6 +36,9 @@ public class Activity_Bitfinex extends AppCompatActivity {
     Response<Bitfinex> res;
     public ArrayList<Bitfinex> bidList = new ArrayList<>();
     public BitfinexAPI gow = new BitfinexAPI();
+    String num1=new String();
+    String num2=new String();
+    String num3=new String();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,8 @@ public class Activity_Bitfinex extends AppCompatActivity {
         retrofit = new Retrofit.Builder().baseUrl("https://api.bitfinex.com").addConverterFactory(GsonConverterFactory.create()).build();
         getInterface = retrofit.create(GetInterfaceB.class);
         gow.execute();
+        TextView v=findViewById(R.id.text1);
+        v.setText("Bitcoin (BTC)");
     }
 
     @Override
@@ -51,6 +56,7 @@ public class Activity_Bitfinex extends AppCompatActivity {
         super.onStart();
         if(gow==null) {
             gow.execute();
+            timeIndex = 0;
         }
     }
 
@@ -66,38 +72,38 @@ public class Activity_Bitfinex extends AppCompatActivity {
             case R.id.bchusd:
                 symbol = "bchusd";
                 timeIndex = 0;
-                TextView v=findViewById(R.id.text);
-                v.setText("bchusd");
+                TextView v=findViewById(R.id.text1);
+                v.setText("Bitcoin Cash (BCH)");
                 bidList.clear();
                 break;
             case R.id.btcusd:
                 symbol = "btcusd";
                 timeIndex = 0;
-                TextView v1=findViewById(R.id.text);
-                v1.setText("btcusd");
+                TextView v1=findViewById(R.id.text1);
+                v1.setText("Bitcoin (BTC)");
                 bidList.clear();
                 break;
             case R.id.ethusd:
                 symbol = "ethusd";
                 timeIndex = 0;
-                TextView v2=findViewById(R.id.text);
-                v2.setText("ethusd");
+                TextView v2=findViewById(R.id.text1);
+                v2.setText("Ethereum (ETH)");
                 bidList.clear();
                 break;
-            case R.id.xmrusd:
+        /*    case R.id.xmrusd:
                 symbol = "xmrusd";
                 timeIndex = 0;
-                TextView v3=findViewById(R.id.text);
-                v3.setText("xmrusd");
+                TextView v3=findViewById(R.id.text1);
+                v3.setText("Monero (XMR)");
                 bidList.clear();
                 break;
             case R.id.ltcusd:
                 symbol = "ltcusd";
                 timeIndex = 0;
-                TextView v4=findViewById(R.id.text);
-                v4.setText("ltcusd");
+                TextView v4=findViewById(R.id.text1);
+                v4.setText("Litecoin (LTC)");
                 bidList.clear();
-                break;
+                break;*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -130,20 +136,24 @@ public class Activity_Bitfinex extends AppCompatActivity {
             super.onProgressUpdate(bitfinexResponse);
             data = bitfinexResponse[0].body();
             bidList.add(data);
-
             List<Entry> bidEntries = new ArrayList<>();
             List<Entry> askEntries = new ArrayList<>();
             List<Entry> lastEntries = new ArrayList<>();
             for (Bitfinex i : bidList) {
                 Float bid = i.getBid();
+                num1=""+bid;
                 Float ask = i.getAsk();
+                num2=""+ask;
                 Float last = i.getLastPrice();
+                num3=""+last;
                 Float timestamp = i.getTimestamp();
 
                 lastEntries.add(new Entry(timestamp, last));
                 bidEntries.add(new Entry(timestamp, bid));
                 askEntries.add(new Entry(timestamp, ask));
             }
+            TextView v2=findViewById(R.id.text2);
+            v2.setText("Bid: "+ " "+ num1 + "\n" + "\n"+ "Ask: "+ " "+num2 + "\n" + "\n"+ "Last: "+ " " +num3);
             LineDataSet bidChart = new LineDataSet(bidEntries, "Bid");
             bidChart.setColor(Color.GREEN);
 
@@ -160,10 +170,14 @@ public class Activity_Bitfinex extends AppCompatActivity {
             chartData.addDataSet(askChart);
             chartData.addDataSet(lastChart);
             chart.setData(chartData);
+            if(timeIndex<1){
+                chart.fitScreen();
+            }
             chart.getAxisLeft().setEnabled(false);
             chart.getXAxis().setAxisMinimum(0);
-            chart.getXAxis().setAxisMaximum(8 + timeIndex);
-            chart.invalidate();
+            chart.getXAxis().setAxisMaximum(1+timeIndex);
+            chart.setVisibleXRangeMaximum (8);
+            chart.moveViewToX(timeIndex);
         }
 
         @Override
@@ -176,6 +190,7 @@ public class Activity_Bitfinex extends AppCompatActivity {
     protected void onStop(){
         super.onStop();
         if(gow!=null){
+            timeIndex = 0;
             gow.cancel(true);
         }
     }
